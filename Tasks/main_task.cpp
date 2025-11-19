@@ -30,7 +30,13 @@
 /* Private function prototypes -----------------------------------------------*/
 
 uint32_t tick = 0;
-
+//常量定义
+//变量定义
+//函数声明
+void MODE1(void);
+void MODE2(void);
+void MODE3(void);
+void MODE4(void);
 namespace remote_control = hello_world::devices::remote_control;
 static const uint8_t kRxBufLen = remote_control::kRcRxDataLen;
 static uint8_t rx_buf[kRxBufLen];
@@ -57,7 +63,31 @@ void MainInit(void) {
   HAL_TIM_Base_Start_IT(&htim6);
 }
 
-void MainTask(void) { tick++; }
+void MainTask(void) {
+   tick++;
+   if (tick <10000) {
+    MODE4();
+    return;
+}
+remote_control::SwitchState temp1 = rc_ptr->rc_l_switch();
+remote_control::SwitchState temp2 = rc_ptr->rc_r_switch();
+if(temp1 == remote_control::kSwitchStateUp)
+{
+  MODE4();
+}
+else if(temp2 == remote_control::kSwitchStateUp)
+{
+  MODE1();
+}
+else if(temp2 == remote_control::kSwitchStateMid)
+{
+  MODE2();
+}
+else if(temp2 == remote_control::kSwitchStateDown)
+{
+  MODE3();
+} 
+  }
 
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim) {
 
@@ -70,10 +100,27 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size) {
   if (huart == &huart3) {
     if (Size == remote_control::kRcRxDataLen) {
       // TODO:在这里刷新看门狗
-
+      HAL_IWDG_Refresh(&hiwdg);
       rc_ptr->decode(rx_buf);
     }
 
     HAL_UARTEx_ReceiveToIdle_DMA(&huart3, rx_buf, kRxBufLen);
   }
+}
+void MODE4(void)
+{
+uint8_t KONG[8] = {0,0,0,0,0,0,0,0};
+CAN_Send_Msg(&hcan2,KONG,0X200,8);
+}
+void MODE1(void)
+{
+  
+}
+void MODE2(void)
+{
+  
+}
+void MODE3(void)
+{
+  
 }
