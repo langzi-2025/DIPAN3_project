@@ -114,7 +114,12 @@ CAN_Send_Msg(&hcan2,KONG,0X200,8);
 }
 void MODE1(void)
 {
-  
+uint8_t DATA[8] = {0,0,0,0,0,0,0,0};
+float a = 3000.0f;
+int16_t temp = (int16_t)a;
+DATA[0] = (uint8_t)(temp>>8);
+DATA[1] = (uint8_t)(temp&0xFF);
+CAN_Send_Msg(&hcan2,DATA,0X200,8);
 }
 void MODE2(void)
 {
