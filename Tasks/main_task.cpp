@@ -111,10 +111,11 @@ void MODE4(void)
 {
 uint8_t KONG[8] = {0,0,0,0,0,0,0,0};
 CAN_Send_Msg(&hcan2,KONG,0X200,8);
+;
 }
 void MODE1(void)
 {
-  
+
 }
 void MODE2(void)
 {
